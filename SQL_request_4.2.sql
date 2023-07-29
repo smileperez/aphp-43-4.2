@@ -1,51 +1,48 @@
-CREATE DATABASE IF NOT EXISTS db1;
+CREATE DATABASE IF NOT EXISTS db;
 
-USE db1;
+USE db;
 
-CREATE TABLE IF NOT EXISTS shop 
+CREATE TABLE IF NOT EXISTS shops
 (
-  name VARCHAR(100) PRIMARY KEY,
+  id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(100) NOT NULL,
   address VARCHAR(100) NOT NULL
 );
   
 CREATE TABLE IF NOT EXISTS products
 (
-  name VARCHAR(100) PRIMARY KEY,  
+  id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(100) NOT NULL,  
   price INT NOT NULL,
   count INT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS clients 
+(
+  id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(100) NOT NULL,
+  phone VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS ord
 (
   id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, 
-  created_at TIMESTAMP NOT NULL, 
-  customer VARCHAR(100) NOT NULL,
-  seller VARCHAR(100) NOT NULL
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+  customer INT NOT NULL,
+  seller INT NOT NULL,
+  FOREIGN KEY (customer)  REFERENCES clients(`id`),
+  FOREIGN KEY (seller)  REFERENCES shops(`id`)
 );
-
-ALTER TABLE `ord` CHANGE `created_at` `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
 
 CREATE TABLE IF NOT EXISTS order_product
 (
   id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
   order_id INT,
-  product_name VARCHAR(100), 
-  product_price INT
+  product INT,
+  product_price INT,
+  FOREIGN KEY (order_id)  REFERENCES ord(`id`),
+  FOREIGN KEY (product)  REFERENCES products(`id`)
 );
-
-CREATE TABLE IF NOT EXISTS client 
-(
-  name VARCHAR(100) PRIMARY KEY,
-  phone VARCHAR(100) NOT NULL
-);
-
-ALTER TABLE `ord` ADD FOREIGN KEY (`seller`) REFERENCES `shop`(`name`) ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE `ord` ADD FOREIGN KEY (`customer`) REFERENCES `client`(`name`) ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE `order_product` ADD FOREIGN KEY (`order_id`) REFERENCES `ord`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE `order_product` ADD FOREIGN KEY (`product_name`) REFERENCES `products`(`name`) ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE `order_product` ADD FOREIGN KEY (`product_price`) REFERENCES `products`(`price`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 INSERT INTO shop (name, address) VALUES ("Пятерочка", "Красногорский бульвар, 24");
 INSERT INTO shop (name, address) VALUES ("О'Кей", "Москва, Кремль");
@@ -65,14 +62,14 @@ INSERT INTO client (name, phone) VALUES ("Алена", "+79651393465");
 INSERT INTO client (name, phone) VALUES ("Любовь", "+79651397612");
 INSERT INTO client (name, phone) VALUES ("Сергей", "+79651399811");
 
-INSERT INTO ord (customer, seller) VALUES ("Андрей", "Пивной 1");
-INSERT INTO ord (customer, seller) VALUES ("Иван", "Дикси");
-INSERT INTO ord (customer, seller) VALUES ("Алена", "Перекресток");
-INSERT INTO ord (customer, seller) VALUES ("Любовь", "О'Кей");
-INSERT INTO ord (customer, seller) VALUES ("Сергей", "Пятерочка");
+INSERT INTO ord (customer, seller) VALUES (1, 5);
+INSERT INTO ord (customer, seller) VALUES (2, 4);
+INSERT INTO ord (customer, seller) VALUES (3, 3);
+INSERT INTO ord (customer, seller) VALUES (4, 2);
+INSERT INTO ord (customer, seller) VALUES (5, 1);
 
-INSERT INTO order_product (order_id, product_name, product_price) VALUES (1, "Пиво", 400);
-INSERT INTO order_product (order_id, product_name, product_price) VALUES (2, "Пиво", 400);
-INSERT INTO order_product (order_id, product_name, product_price) VALUES (3, "Кабачок", 180);
-INSERT INTO order_product (order_id, product_name, product_price) VALUES (4, "Пиво", 400);
-INSERT INTO order_product (order_id, product_name, product_price) VALUES (5, "Пиво", 400);
+INSERT INTO order_product (order_id, product) VALUES (1, 4);
+INSERT INTO order_product (order_id, product) VALUES (2, 4);
+INSERT INTO order_product (order_id, product) VALUES (3, 3);
+INSERT INTO order_product (order_id, product) VALUES (4, 4);
+INSERT INTO order_product (order_id, product) VALUES (5, 4);
